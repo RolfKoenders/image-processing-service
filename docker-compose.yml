@@ -1,25 +1,26 @@
-version: "3"
-services:
-  rabbitmq:
-      image: rabbitmq:3.6.10-management-alpine
-      environment:
-          RABBITMQ_DEFAULT_USER: guest
-          RABBITMQ_DEFAULT_PASS: guest
-      ports:
-          - 15672:15672
+rabbitmq:
+    image: rabbitmq:3.6.10-management-alpine
+    environment:
+        RABBITMQ_DEFAULT_USER: guest
+        RABBITMQ_DEFAULT_PASS: guest
+    net: "container:nginx"    
 
-  nginx:
-      build: ./nginx
-      volumes:
-          - './public:/var/www/html'
-      ports:
-          - "8080:8080"
+nginx:
+    build: ./nginx
+    volumes:
+        - './public:/var/www/html'
+    ports:
+        - 8080:8080
+        - 9080:9080
+        - 15672:15672
 
-  api:
-      build: ./api
-      environment:
-          HTTP_PORT: 9080
-      volumes:
-          - ./api:/opt/app
-      ports:
-          - 9080:9080
+api:
+    build: ./api
+    environment:
+        HTTP_PORT: 9080
+        IMAGE_UPLOAD_PATH: "/opt/app/uploads/images"
+        IMAGE_SERVICE_QUE: 'image-processing'
+    volumes:
+        - ./uploads/images:/opt/app/uploads/images
+        - ./api:/opt/app
+    net: "container:nginx"

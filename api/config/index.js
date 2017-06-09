@@ -11,6 +11,18 @@ let config = {
         format: "port",
         default: 9080,
         env: "HTTP_PORT"
+    },
+    upload_dir: {
+        doc: "Image upload directory",
+        format: String,
+        default: null,
+        env: "IMAGE_UPLOAD_PATH"
+    },
+    imageQue: {
+        doc: "Que name of the processing worker que",
+        format: String,
+        default: null,
+        env: "IMAGE_SERVICE_QUE"
     }
 };
 
