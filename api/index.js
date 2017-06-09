@@ -54,10 +54,8 @@ api.post('/api/submit', function (req, res) {
 // Setup connection with que & Startup api server
 amqp.connect('amqp://localhost', function(err, conn) {
     conn.createChannel(function(err, ch) {
-        const q = config.imageQue;
-        ch.assertQueue(q, {durable: false});
+        ch.assertQueue(config.imageQue, {durable: false});
         imageChannel = ch;
-
         // Start API server
         api.listen(config.port, function () {
             console.log('Image-Svc-API listening at port %s', config.port);
