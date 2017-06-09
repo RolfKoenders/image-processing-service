@@ -3,7 +3,7 @@
 > Proof Of Concept
 
 ## Goal
-A large image (in widht & height) is uploaded and will be processed so we have 3 different sizes coming out. 
+A large image (in widht & height) is uploaded and will be processed so we have different sizes coming out. 
 
 ### Plan / Approach
 1. The image which is uploaded to the nodejs API will be uploaded to a shared volume
