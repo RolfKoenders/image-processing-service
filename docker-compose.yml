@@ -1,0 +1,25 @@
+version: "3"
+services:
+  rabbitmq:
+      image: rabbitmq:3.6.10-management-alpine
+      environment:
+          RABBITMQ_DEFAULT_USER: guest
+          RABBITMQ_DEFAULT_PASS: guest
+      ports:
+          - 15672:15672
+
+  nginx:
+      build: ./nginx
+      volumes:
+          - './public:/var/www/html'
+      ports:
+          - "8080:8080"
+
+  api:
+      build: ./api
+      environment:
+          HTTP_PORT: 9080
+      volumes:
+          - ./api:/opt/app
+      ports:
+          - 9080:9080
