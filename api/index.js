@@ -30,25 +30,28 @@ const storage = multer.diskStorage({
 
 // # Handler
 api.post('/api/submit', function (req, res) {
-    var uploadProfileImgs = multer({
+    var uploads = multer({
         storage: storage
-    }).single('image');
+    }).array('image');
 
-    uploadProfileImgs(req, res, function (err) {
+    uploads(req, res, function (err) {
         if (err) {
             console.log(err.message);
             return res.send(400, err);
         }
 
-        console.log('Everything went fine, image is uploaded.');
+        console.log('All the files are uploaded, push messages to the queue');
 
-        // Send message to que
-        imageChannel.sendToQueue(config.imageQueue, new Buffer.from(JSON.stringify({
-            path: config.upload_dir,
-            image: req.file.filename
-        }), 'utf-8'));
+        for(let i = 0; i < req.files.length; i++) {
+            const file = req.files[i];
+            imageChannel.sendToQueue(config.imageQueue, new Buffer.from(JSON.stringify({
+                path: config.upload_dir,
+                image: file.filename,
+                mimetype: file.mimetype
+            }), 'utf-8'));
+        }
 
-        return res.send(200);
+        res.send(200);
     });
 });
 

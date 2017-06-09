@@ -47,7 +47,7 @@ services:
         depends_on:
             - rabbitmq
         environment:
-            WORKER_NAME: "Worker1"
+            WORKER_NAME: "Worker"
             IMAGE_UPLOAD_PATH: "/opt/app/uploads"
             IMAGE_SERVICE_QUEUE: "image-processing"
         volumes:

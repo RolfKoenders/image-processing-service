@@ -42,7 +42,7 @@ func main() {
 	msgs, err := ch.Consume(
 		q.Name, // queue
 		os.Getenv("WORKER_NAME"), // consumer
-		true,  // auto-ack
+		false, // auto-ack
 		false, // exclusive
 		false, // no-local
 		false, // no-wait
@@ -70,11 +70,12 @@ func main() {
 				wg.Add(1)
 				go resizeImage(&m, size)
 			}
-			wg.Wait()
+
+			d.Ack(false)
 		}
 	}()
 
-	log.Printf("%v [*] Waiting for messages. To exit press CTRL+C", os.Getenv("WORKER_NAME"))
+	log.Printf("[*] %v Waiting for messages. To exit press CTRL+C", os.Getenv("WORKER_NAME"))
 	<-forever
 }
 
