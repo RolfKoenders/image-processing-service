@@ -42,7 +42,7 @@ api.post('/api/submit', function (req, res) {
         console.log('Everything went fine, image is uploaded.');
         
         // Send message to que
-        imageChannel.sendToQueue(config.imageQue, new Buffer.from(JSON.stringify({
+        imageChannel.sendToQueue(config.imageQueue, new Buffer.from(JSON.stringify({
             path: config.upload_dir,
             image: '1f8abb90e377b32c26ae6190f714e609.jpeg'
         }), 'utf-8'));
@@ -55,7 +55,7 @@ api.post('/api/submit', function (req, res) {
 amqp.connect(`amqp://${config.rabbit.host}`, function(err, conn) {
     console.log(conn);
     conn.createChannel(function(err, ch) {
-        ch.assertQueue(config.imageQue, {durable: false});
+        ch.assertQueue(config.imageQueue, {durable: false});
         imageChannel = ch;
         // Start API server
         api.listen(config.port, function () {
