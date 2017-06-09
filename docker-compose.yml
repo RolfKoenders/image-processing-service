@@ -33,7 +33,9 @@ services:
         environment:
             HTTP_PORT: 9080
             IMAGE_UPLOAD_PATH: "/opt/app/uploads"
-            IMAGE_SERVICE_QUE: 'image-processing'
+            RABBIT_HOST: "rabbitmq"
+            RABBIT_PORT: 15672
+            IMAGE_SERVICE_QUEUE: "image-processing"
         ports:
             - 9080:9080
         volumes:

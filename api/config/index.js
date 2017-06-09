@@ -18,11 +18,25 @@ let config = {
         default: null,
         env: "IMAGE_UPLOAD_PATH"
     },
-    imageQue: {
-        doc: "Que name of the processing worker que",
+    rabbit: {
+        host: {
+            doc: "Host of rabbitmq",
+            format: String,
+            default: null,
+            env: "RABBIT_HOST"
+        },
+        port: {
+            doc: "Port of rabbitmq",
+            format: "port",
+            default: "5672",
+            env: "RABBIT_PORT"
+        }
+    },
+    imageQueue: {
+        doc: "Que name of the processing worker QUEUE",
         format: String,
         default: null,
-        env: "IMAGE_SERVICE_QUE"
+        env: "IMAGE_SERVICE_QUEUE"
     }
 };
 

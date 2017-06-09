@@ -52,7 +52,8 @@ api.post('/api/submit', function (req, res) {
 });
 
 // Setup connection with que & Startup api server
-amqp.connect('amqp://rabbitmq', function(err, conn) {
+amqp.connect(`amqp://${config.rabbit.host}`, function(err, conn) {
+    console.log(conn);
     conn.createChannel(function(err, ch) {
         ch.assertQueue(config.imageQue, {durable: false});
         imageChannel = ch;
