@@ -18,14 +18,14 @@ const api = express();
 
 // # Multer, file upload handler
 const storage = multer.diskStorage({
-  destination: config.upload_dir,
-  filename: function (req, file, cb) {
-    crypto.pseudoRandomBytes(16, function (err, raw) {
-      if (err) return cb(err)
+  destination: config.upload_dir
+//   ,filename: function (req, file, cb) {
+//     crypto.pseudoRandomBytes(16, function (err, raw) {
+//       if (err) return cb(err)
 
-      cb(null, raw.toString('hex') + path.extname(file.originalname))
-    })
-  }
+//       cb(null, raw.toString('hex') + path.extname(file.originalname))
+//     })
+//   }
 });
 
 // # Handler
@@ -44,7 +44,7 @@ api.post('/api/submit', function (req, res) {
         // Send message to que
         imageChannel.sendToQueue(config.imageQueue, new Buffer.from(JSON.stringify({
             path: config.upload_dir,
-            image: '1f8abb90e377b32c26ae6190f714e609.jpeg'
+            image: '19078a63fc464cd0b4c0033aaa59f1a5'
         }), 'utf-8'));
 
         return res.send(200);
@@ -53,7 +53,6 @@ api.post('/api/submit', function (req, res) {
 
 // Setup connection with que & Startup api server
 amqp.connect(`amqp://${config.rabbit.host}`, function(err, conn) {
-    console.log(conn);
     conn.createChannel(function(err, ch) {
         ch.assertQueue(config.imageQueue, {durable: false});
         imageChannel = ch;

@@ -28,7 +28,7 @@ let config = {
         port: {
             doc: "Port of rabbitmq",
             format: "port",
-            default: "5672",
+            default: 5672,
             env: "RABBIT_PORT"
         }
     },

@@ -41,3 +41,13 @@ services:
         volumes:
             - ./uploads:/opt/app/uploads
             - ./api:/opt/app
+
+    worker:
+        build: ./worker
+        depends_on:
+            - rabbitmq
+        environment:
+            IMAGE_UPLOAD_PATH: "/opt/app/uploads"
+            IMAGE_SERVICE_QUEUE: "image-processing"
+        volumes:
+            - ./uploads:/opt/app/uploads
