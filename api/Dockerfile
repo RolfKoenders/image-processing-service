@@ -1,6 +1,8 @@
 # Pulling nodejs base image
 FROM node:8.0.0-alpine
 
+RUN apk add --no-cache bash netcat-openbsd
+
 # Skip npm install if package.json didn't changed
 ADD package.json /tmp/package.json
 
