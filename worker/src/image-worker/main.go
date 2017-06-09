@@ -3,10 +3,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"image/jpeg"
 	"log"
 	"os"
-
-	"image/jpeg"
+	"sync"
 
 	"github.com/nfnt/resize"
 	"github.com/streadway/amqp"
@@ -18,6 +18,8 @@ type ImageMessage struct {
 }
 
 func main() {
+	var sizesToScale = []int{50, 125, 250, 500}
+
 	imageQueue := os.Getenv("IMAGE_SERVICE_QUEUE")
 	conn, err := amqp.Dial("amqp://guest:guest@rabbitmq:5672")
 	failOnError(err, "Failed to connect to RabbitMQ")
@@ -38,13 +40,13 @@ func main() {
 	failOnError(err, "Failed to declare a queue")
 
 	msgs, err := ch.Consume(
-		q.Name,     // queue
-		"Worker 1", // consumer
-		true,       // auto-ack
-		false,      // exclusive
-		false,      // no-local
-		false,      // no-wait
-		nil,        // args
+		q.Name, // queue
+		os.Getenv("WORKER_NAME"), // consumer
+		true,  // auto-ack
+		false, // exclusive
+		false, // no-local
+		false, // no-wait
+		nil,   // args
 	)
 	failOnError(err, "Failed to register a consumer/worker")
 
@@ -62,17 +64,22 @@ func main() {
 
 			log.Printf("Received a message: %s", m.Image)
 
-			resizeImage(&m)
+			var wg sync.WaitGroup
+			for _, size := range sizesToScale {
+				log.Println("Create routine ")
+				wg.Add(1)
+				go resizeImage(&m, size)
+			}
+			wg.Wait()
 		}
 	}()
 
-	log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
+	log.Printf("%v [*] Waiting for messages. To exit press CTRL+C", os.Getenv("WORKER_NAME"))
 	<-forever
 }
 
-func resizeImage(im *ImageMessage) {
-	uploadPath := os.Getenv("IMAGE_UPLOAD_PATH")
-	imagePath := uploadPath + "/" + im.Image
+func resizeImage(im *ImageMessage, width int) {
+	imagePath := im.Path + "/" + im.Image
 	file, err := os.Open(imagePath)
 	if err != nil {
 		log.Fatal(err)
@@ -85,15 +92,16 @@ func resizeImage(im *ImageMessage) {
 	}
 	file.Close()
 
-	m := resize.Resize(100, 0, img, resize.Lanczos3)
-	newImagePath := uploadPath + "/processed/" + im.Image + "_100.jpg"
+	m := resize.Resize(uint(width), 0, img, resize.Lanczos3)
+
+	newImagePath := fmt.Sprintf("%s/processed/%s_%v.jpg", im.Path, im.Image, width)
 	out, err := os.Create(newImagePath)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer out.Close()
-	jpeg.Encode(out, m, nil)
 
+	jpeg.Encode(out, m, nil)
 }
 
 func failOnError(err error, msg string) {

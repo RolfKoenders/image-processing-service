@@ -6,7 +6,7 @@ const multer = require('multer');
 const bodyParser = require('body-parser');
 const path = require('path');
 const fs = require('fs-extra');
-const crypto = require('crypto');
+// const crypto = require('crypto');
 const amqp = require('amqplib/callback_api');
 
 const config = require('./config');
@@ -39,12 +39,13 @@ api.post('/api/submit', function (req, res) {
             console.log(err.message);
             return res.send(400, err);
         }
+
         console.log('Everything went fine, image is uploaded.');
-        
+
         // Send message to que
         imageChannel.sendToQueue(config.imageQueue, new Buffer.from(JSON.stringify({
             path: config.upload_dir,
-            image: '19078a63fc464cd0b4c0033aaa59f1a5'
+            image: req.file.filename
         }), 'utf-8'));
 
         return res.send(200);
