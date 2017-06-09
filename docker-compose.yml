@@ -18,9 +18,9 @@ api:
     build: ./api
     environment:
         HTTP_PORT: 9080
-        IMAGE_UPLOAD_PATH: "/opt/app/uploads/images"
+        IMAGE_UPLOAD_PATH: "/opt/app/uploads"
         IMAGE_SERVICE_QUE: 'image-processing'
     volumes:
-        - ./uploads/images:/opt/app/uploads/images
+        - ./uploads:/opt/app/uploads
         - ./api:/opt/app
     net: "container:nginx"
