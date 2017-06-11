@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"sync"
+	"time"
 
 	"github.com/nfnt/resize"
 	"github.com/streadway/amqp"
@@ -17,20 +18,34 @@ type ImageMessage struct {
 	Image string
 }
 
+func connectToRabbit(uri string) *amqp.Connection {
+	for {
+		conn, err := amqp.Dial("amqp://guest:guest@rabbitmq:5672")
+		if err == nil {
+			log.Println("Connected to RabbitMQ")
+			// Create channel with rabbit
+			// Stop trying to connect
+			return conn
+		}
+
+		fmt.Println("Trying to reconnect to RabbitMQ")
+		time.Sleep(500 * time.Millisecond)
+	}
+}
+
 func main() {
 	var sizesToScale = []int{50, 125, 250, 500}
 
-	imageQueue := os.Getenv("IMAGE_SERVICE_QUEUE")
-	conn, err := amqp.Dial("amqp://guest:guest@rabbitmq:5672")
-	failOnError(err, "Failed to connect to RabbitMQ")
-	defer conn.Close()
+	IMAGEQUEUE := os.Getenv("IMAGE_SERVICE_QUEUE")
+
+	conn := connectToRabbit("amqp://guest:guest@rabbitmq:5672")
 
 	ch, err := conn.Channel()
 	failOnError(err, "Failed to open a channel")
 	defer ch.Close()
 
 	q, err := ch.QueueDeclare(
-		imageQueue, // name
+		IMAGEQUEUE, // name
 		false,      // durable
 		false,      // delete when unused
 		false,      // exclusive,
