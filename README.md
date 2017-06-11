@@ -11,9 +11,11 @@ A large image (in widht & height) is uploaded and will be processed so we have d
 3. The workers which will be written in Golang will pickup the message, take the image and resize/scale them so we have three different sizes. (small, medium, large)
 
 ## Starting up
-Before running make sure you create the 'uploads' folder manually by running the mkdir command in the project directory.
+Before starting everything up with docker compose, make sure to launch the `setup.sh` script. This script will create the missing folder where the uploaded images will be stored and install all the dependencies for the nodejs api.
+
 ```bash
-$ mkdir -p uploads/processed
+# In the project dir
+$ ./setup.sh
 ```
 
 Then we can bring everything up with docker compose
