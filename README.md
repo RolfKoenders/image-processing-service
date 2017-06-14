@@ -39,4 +39,4 @@ Proxy layer for the API and used to serve static files. Open a browser window an
 Simple API layer written in [node.js](https://nodejs.org/en/). This is the API where the submitted form will end up.
 
 ### Worker
-The worker which is going to process the images and takes care of resizing them. Since there is no reconnect mechanism in place there is a chance that the worker container is in exitted state. With the command `docker-compose restart worker` its possible to bring him to life. 
+The worker which is going to process the images and takes care of resizing them. 
