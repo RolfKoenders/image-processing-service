@@ -27,7 +27,7 @@ This will build and spin up the following container
 - RabbitMQ
 - Nginx
 - API
-- Worker (exited state)
+- Worker
 
 ### RabbitMQ
 [RabbitMQ](https://www.rabbitmq.com/) is the most widely deployed open source message broker. The management portal is listening on port `15672`
